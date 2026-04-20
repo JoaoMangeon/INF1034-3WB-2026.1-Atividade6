@@ -12,13 +12,22 @@ rigbymordecai_img = transform.scale(rigbymordecai_img, (225, 200))
 
 rigbymordecai_font = font.Font('IceCreamPartySolid.ttf', 50)
 
-mixer.music.load('partytonight.mp3')
-mixer.music.play(-1)
+#mixer.music.load('partytonight.mp3')
+#mixer.music.play(-1)
 
 sol_x = 140
+sol_y = 100
 nuvem_x = 850
 velocidade_nuvem = 3
 
+som_manha = mixer.Sound('aberturaapenasumshow.mp3')
+som_tarde = mixer.Sound('ISSOÉTRAPmixtape.mp3')
+som_noite = mixer.Sound('noitedarapaziada.mp3')
+
+
+manha = (209, 245, 255)
+tarde = (219, 112, 104)
+noite = (11, 7, 49)
 
 window.fill((209, 245, 255))
 
@@ -36,18 +45,60 @@ while running:
     
     if nuvem_x <=45 or nuvem_x>=1025:
        velocidade_nuvem = -velocidade_nuvem
-
-    
+   
     dt = clock.get_time()/1000
     keys = key.get_pressed()
+
 
     if keys[K_d]:
        sol_x = sol_x + 300 * dt
     elif keys[K_a]:
        sol_x = sol_x + -300 * dt
+    elif keys[K_RIGHT]:
+         sol_x = sol_x + 300 * dt
+    elif keys[K_LEFT]:
+         sol_x = sol_x + -300 * dt
 
+    if ev.type == MOUSEMOTION:
+            sol_x, sol_y = ev.pos
+   
+    if sol_x <= 110:
+       sol_x = 110
+    elif sol_x >= 1170: 
+       sol_x = 1170
+    
+    #if sol_x < 520:
+        #cor_fundo = manha  
+    #elif sol_x < 760:
+        #cor_fundo = tarde  
+    #else:
+        #cor_fundo = noite
+      
+    progresso = sol_x / 1280
 
-    window.fill((209, 245, 255))
+    if progresso < 0.5:
+       fator = progresso * 2
+       r = manha[0] + (tarde[0] - manha[0]) * fator
+       g = manha[1] + (tarde[1] - manha[1]) * fator
+       b = manha[2] + (tarde[2] - manha[2]) * fator
+    else:
+       fator = (progresso - 0.5) * 2
+       r = tarde[0] + (noite[0] - tarde[0]) * fator
+       g = tarde[1] + (noite[1] - tarde[1]) * fator
+       b = tarde[2] + (noite[2] - tarde[2]) * fator
+
+   
+
+    if ev.type == MOUSEBUTTONDOWN:
+        if sol_x < 520:
+            som_manha.play()
+        elif sol_x < 760:
+            som_tarde.play()
+        else:
+            som_noite.play()
+
+    cor_fundo = (int(r), int(g), int(b))
+    window.fill(cor_fundo)
     
     # Desenhar a partir daqui
 
